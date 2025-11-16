@@ -46,7 +46,7 @@
         .hero{
             width: 100%;
             height: 75vh;
-            background: url('https://images.unsplash.com/photo-1506157786151-b8491531f063') center/cover no-repeat;
+            background: url('https://i.postimg.cc/R0NmKzqy/1763283949030.jpg') center/cover no-repeat;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -95,7 +95,10 @@
         .featured-card img{
             width: 100%;
             height: 300px;
-            object-fit: cover;
+            object-fit: contain;      /* Update: contain, not crop */
+            background: #f4f4f4;
+            border-radius: 10px;
+            display: block;
         }
         .featured-content{
             padding: 20px;
@@ -140,7 +143,10 @@
         .event-card img{
             width: 100%;
             height: 180px;
-            object-fit: cover;
+            object-fit: contain;      /* Update: contain, not crop */
+            background: #f4f4f4;
+            border-radius: 10px 10px 0 0;
+            display: block;
         }
         .event-card .info{
             padding: 15px;
@@ -187,8 +193,11 @@
         }
         .ticket-banner {
             width: 100%;
-            height: auto;
+            height: 180px;
+            object-fit: contain;      /* Update: contain, not crop */
+            background: #f4f4f4;
             border-radius: 10px;
+            display: block;
         }
         .btn-primary {
             background: #007bff;
@@ -198,6 +207,7 @@
             border: none;
             margin-top: 10px;
             cursor: pointer;
+            font-size: 17px;
         }
         .btn-secondary {
             background: #ddd;
@@ -232,6 +242,40 @@
         .receipt-modal-colorful .qr-container {
             text-align:center;
             margin-top:10px;
+        }
+        #ticketModal .modal-content form {
+          margin: 0;
+          padding: 0;
+        }
+        #ticketModal .field-group {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        #ticketModal label {
+          font-size: 15px;
+          font-weight: bold;
+          margin-bottom: 5px;
+          color: #333;
+        }
+        #ticketModal input, #ticketModal select {
+          width: 100%;
+          padding: 10px 12px;
+          border-radius: 7px;
+          border: 1px solid #aaa;
+          font-size: 16px;
+          margin-bottom: 0px;
+          background: #f9fafd;
+          box-sizing: border-box;
+        }
+        #ticketModal input:focus, #ticketModal select:focus {
+          border: 1.5px solid #1176d6;
+          outline: none;
+          background: #eefaff;
+        }
+        #ticketModal .btn-primary {
+          width: 100%;
+          font-size: 17px;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -268,18 +312,28 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
             <img id="ticketBanner" src="" class="ticket-banner" />
-            <h2 id="eventNameDisplay"></h2>
-            <label>Name:</label>
-            <input type="text" id="buyerName">
-            <label>Phone Number:</label>
-            <input type="text" id="buyerPhone">
-            <label>Ticket Type:</label>
-            <select id="ticketType">
-                <option value="VIP">VIP</option>
-                <option value="Ordinary">Ordinary</option>
-                <option value="Couple">Couple</option>
-            </select>
-            <button onclick="showConfirmModal()" class="btn-primary">Continue</button>
+            <h2 id="eventNameDisplay" style="margin:20px 0 10px 0;"></h2>
+            <form id="ticketForm" style="display:flex;flex-direction:column;gap:14px;margin-top:12px;">
+              <div class="field-group">
+                <label for="buyerName">Name</label>
+                <input type="text" id="buyerName" placeholder="Your Full Name" autocomplete="name" required>
+              </div>
+              <div class="field-group">
+                <label for="buyerPhone">Phone Number</label>
+                <input type="tel" id="buyerPhone" placeholder="e.g. 0971234567" autocomplete="tel" required>
+              </div>
+              <div class="field-group">
+                <label for="ticketType">Ticket Type</label>
+                <select id="ticketType">
+                  <option value="VIP">VIP</option>
+                  <option value="Ordinary">Ordinary</option>
+                  <option value="Couple">Couple</option>
+                </select>
+              </div>
+              <button type="button" onclick="showConfirmModal()" class="btn-primary" style="margin-top:14px;">
+                Continue
+              </button>
+            </form>
         </div>
     </div>
     <!-- ================= CONFIRMATION MODAL ================= -->
@@ -304,7 +358,7 @@
     </footer>
     <script>
     // Example using SheetDB.io
-    const SHEETDB_API = "https://sheetdb.io/api/v1/owneanfeuzae9"; // Replace YOUR_API_KEY with your actual SheetDB API key
+    const SHEETDB_API = "https://sheetdb.io/api/v1/owneanfeuzae9"; // Replace with your SheetDB API key
     let events = [];
 
     // Fetch and render events from SheetDB
@@ -312,15 +366,14 @@
       fetch(SHEETDB_API)
         .then(res => res.json())
         .then(data => {
-          events = data; // data is an array of row objects
+          events = data;
           renderEvents();
         });
     }
 
     // Helper: Render the featured and upcoming events
     function renderEvents() {
-        // Render Featured Event
-        const featured = events.find(ev => ev.type && ev.type.toLowerCase() === "featured");
+        const featured = events.find(ev => ev.type && ev.type.toLowerCase().trim() === "featured");
         document.getElementById("featuredSection").innerHTML = featured ?
         `<h2>Featured Event</h2>
             <div class="featured-card">
@@ -338,8 +391,7 @@
                 </div>
             </div>` : '';
 
-        // Render Upcoming Events
-        const upcoming = events.filter(ev => ev.type && ev.type.toLowerCase() === "upcoming");
+        const upcoming = events.filter(ev => ev.type && ev.type.toLowerCase().trim() === "upcoming");
         document.getElementById("eventsSection").innerHTML =
             `<h2>Upcoming Events</h2>
             <div class="event-grid">
@@ -357,7 +409,6 @@
             </div>`;
     }
 
-    // All previous ticket/booking modal JS follows unchanged
     const ticketPrices = {
         VIP: 200,
         Ordinary: 100,
@@ -381,15 +432,12 @@
         let phone = buyerPhone.value;
         let type = ticketType.value;
         let eventName = document.getElementById("ticketModal").dataset.event;
-
-        // Try to get the dynamic price from the event list, fallback to type price
         let ev = events.find(ev => ev.name === eventName);
         let price = ev && ev.price ? ev.price : (ticketPrices[type] || 0);
 
         let receiptNum = 
             'NOL-' + new Date().toISOString().slice(0,10).replace(/-/g,"") + '-' +
             Math.floor(1000 + Math.random() * 9000);
-        // Store ticket info for future steps
         window.ticketPayload = {
             event: eventName,
             name,
@@ -412,7 +460,6 @@
             <div id="ticketQR" class="qr-container"></div>
           </div>
         `;
-        // Generate the QR code with ticket details
         setTimeout(() => {
             let qr = document.getElementById("ticketQR");
             qr.innerHTML = "";
@@ -431,11 +478,10 @@
                 colorLight : "#fff",
                 correctLevel : QRCode.CorrectLevel.H
             });
-        }, 400); // Give DOM time to render confirmDetails
+        }, 400);
         closeModal();
         document.getElementById("confirmModal").style.display = "flex";
 
-        // Set WhatsApp booking handler
         document.getElementById('whatsappBookBtn').onclick = function() {
             bookViaWhatsapp(window.ticketPayload);
         };
@@ -444,7 +490,6 @@
         document.getElementById("confirmModal").style.display = "none";
     }
     function bookViaWhatsapp(payload) {
-        // Compose WhatsApp message text
         const message = encodeURIComponent(
             `Hello! With the below details I would like to book this ticket:\n` +
             `Event: ${payload.event}\n` +
@@ -508,8 +553,7 @@
             }
         });
     }
-    // Load events on page load
     window.onload = loadEvents;
     </script>
 </body>
-</html>
+                                                   </html>
