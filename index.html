@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NIGHT OF LAUGHTER Upcoming Events | Buy Tickets</title>
     <style>
         body{
@@ -316,9 +316,10 @@
               <div class="field-group">
                 <label for="ticketType">Ticket Type</label>
                 <select id="ticketType">
-                  <option value="VIP">VIP</option>
-                  <option value="Ordinary">Ordinary</option>
-                  <option value="Couple">Couple</option>
+                  <option value="VIP single">VIP single</option>
+                  <option value="VIP double">VIP double</option>
+                  <option value="Ordinary single">Ordinary signle</option>
+                  <option value="Ordinary double">Ordinary double</option>
                 </select>
               </div>
               <button type="submit" class="btn-primary" style="margin-top:14px;">
@@ -570,9 +571,10 @@
         document.getElementById("confirmModal").style.display = "none";
     }
     const ticketPrices = {
-        VIP: 200,
-        Ordinary: 100,
-        Couple: 170
+        VIP single: 500,
+        vip double: 800,
+        Ordinary single: 300,
+        Ordinary double: 500.
     };
     window.onclick = function(event) {
         ['ticketModal', 'confirmModal', 'ticketResult'].forEach(function(id) {
